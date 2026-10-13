@@ -262,3 +262,21 @@ body.is-touch.landscape #touch {
     pointer-events: none; opacity: 0.8;
 }
 body.is-touch.landscape #touch > * { pointer-events: auto; }
+
+/* ---------- 全畫面演出 (標題卡、蛋糕、照片、片尾) ---------- */
+.overlay.scene { background: #000; flex-direction: column; text-align: center; gap: 0.5em; cursor: pointer; }
+.card-main { font-size: 1.9em; font-weight: 700; letter-spacing: 0.12em; text-shadow: 2px 2px 0 #7a2a6a; }
+.card-sub { font-size: 1.05em; opacity: 0.85; }
+.overlay.scene.cake-scene { background: radial-gradient(ellipse at 50% 60%, #3a2250 0%, #0c0818 75%); }
+.cake-flames { font-size: 2.4em; letter-spacing: 0.3em; margin-bottom: -0.5em; animation: blink 0.6s steps(2) infinite; }
+.cake-body { font-size: 8em; line-height: 1.1; }
+.cake-hint { color: var(--accent); }
+.photo-scene { padding: 0; }
+.photo-scene .photo { width: 100%; height: 100%; object-fit: contain; }
+.photo-scene .photo-count { position: absolute; right: 0.6em; bottom: 0.4em; font-size: 0.8em; opacity: 0.7; text-shadow: 1px 1px 0 #000; }
+.overlay.scene.credits-scene { background: radial-gradient(ellipse at 50% 40%, #2a2a58 0%, #0a0818 80%); }
+.credit-page { display: flex; flex-direction: column; align-items: center; gap: 0.5em; max-width: 90%; }
+.credit-portrait { width: 6em; height: 6em; border: 2px solid var(--panel-border); border-radius: 8px; image-rendering: pixelated; }
+.credit-name { color: var(--accent); font-size: 1.2em; font-weight: 700; }
+.credit-text { font-size: 1.1em; line-height: 1.6; }
+.credit-page.small .credit-text { font-size: 0.85em; opacity: 0.8; }

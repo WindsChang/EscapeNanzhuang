@@ -18,10 +18,11 @@ export function initDebug(game, ui, { hideTitle }) {
         info.textContent = `嚇暈 ${faints} 次 / 難度等級 ${d.level} (老鬼速度 x${d.speed}${d.hint ? '、顯示提示' : ''})`;
     };
 
+    const skip = h('input', { type: 'checkbox', checked: true });
     const jump = async (id) => {
         hideTitle();
         panel.hidden = true;
-        await game.startChapter(id, { reset: true, preset: true });
+        await game.startChapter(id, { reset: true, preset: true, skipIntro: skip.checked });
     };
 
     const chapters = [...CHAPTER_ORDER, 'sandbox'].map((id) => {
@@ -52,7 +53,7 @@ export function initDebug(game, ui, { hideTitle }) {
     const faintNow = h('button', { type: 'button', onclick: () => game.faint('ghost') }, '立刻嚇暈');
 
     panel.append(
-        h('h3', {}, '跳到章節 (含前置狀態)'), h('div', { class: 'row' }, chapters),
+        h('h3', {}, '跳到章節 (含前置狀態)'), h('div', { class: 'row' }, h('label', {}, skip, ' 略過開場劇情')), h('div', { class: 'row' }, chapters),
         h('h3', {}, '狀態'), info,
         h('div', { class: 'row' }, h('label', {}, invincible, ' 無敵'), h('label', {}, coords, ' 顯示座標')),
         h('div', { class: 'row' }, itemSel, giveBtn),

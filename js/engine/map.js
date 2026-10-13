@@ -1,11 +1,15 @@
-// 地圖：以字元陣列定義 (地面層 + 物件層)，legend 把字元對應到圖塊名稱
+// 地圖：以字元陣列定義，legend 把字元對應到圖塊名稱。
+// 兩種寫法：
+//   1. rows (建議)：單一字元網格。legend 值為地面圖塊名稱，或物件圖塊名稱 (底下自動鋪 def.floor)，
+//      也可寫成 { g: 地面, o: 物件 } 指定物件底下的地面。
+//   2. ground + objects：地面層與物件層分開的兩個字元網格 (示範場景使用)。
 import { TILE, VIEW_W, VIEW_H } from './util.js';
-import { drawTile, isSolidTile } from './sprites.js';
+import { drawTile, isSolidTile, isGroundTile } from './sprites.js';
 
 export class GameMap {
     /**
      * def = {
-     *   id, name, ground: string[], objects?: string[], legend: { char: tileName },
+     *   id, name, rows | (ground, objects), legend: { char: tileName | {g,o} }, floor?: 物件底下預設地面,
      *   entities?: object[], bgm?: string, bg?: string (地圖外的背景色), dark?: number (0..1 暗角強度)
      * }
      */
@@ -13,14 +17,52 @@ export class GameMap {
         this.def = def;
         this.id = def.id;
         this.name = def.name || def.id;
-        this.legend = def.legend || {};
-        this.ground = def.ground.map((r) => [...r]);
-        this.objects = (def.objects || []).map((r) => [...r]);
-        this.height = this.ground.length;
-        this.width = Math.max(...this.ground.map((r) => r.length));
         this.bg = def.bg || '#000';
         this.dark = def.dark || 0;
-        this.overrides = new Map(); // 動態改變的圖塊：'x,y' -> { ground?, object? }
+        this.overrides = new Map(); // 動態改變的圖塊：'x,y' -> { ground?, objects? }
+        const legend = def.legend || {};
+
+        const lookup = (ch) => (ch && ch !== ' ' ? legend[ch] : undefined);
+        if (def.rows) {
+            this.height = def.rows.length;
+            this.width = Math.max(...def.rows.map((r) => r.length));
+            this.groundNames = [];
+            this.objectNames = [];
+            def.rows.forEach((row) => {
+                const g = [];
+                const o = [];
+                for (let x = 0; x < this.width; x++) {
+                    const spec = lookup(row[x]);
+                    let gn = null;
+                    let on = null;
+                    if (typeof spec === 'string') {
+                        if (isGroundTile(spec)) gn = spec;
+                        else { gn = def.floor || 'wood'; on = spec; }
+                    } else if (spec) {
+                        gn = spec.g || def.floor || 'wood';
+                        on = spec.o || null;
+                    }
+                    g.push(gn);
+                    o.push(on);
+                }
+                this.groundNames.push(g);
+                this.objectNames.push(o);
+            });
+        } else {
+            this.height = def.ground.length;
+            this.width = Math.max(...def.ground.map((r) => r.length));
+            const conv = (rows, isObj) => rows.map((row) => {
+                const out = [];
+                for (let x = 0; x < this.width; x++) {
+                    const ch = row ? row[x] : undefined;
+                    out.push(!ch || ch === ' ' || (isObj && ch === '.') ? null : legend[ch] || null);
+                }
+                return out;
+            });
+            this.groundNames = conv(def.ground, false);
+            this.objectNames = conv(def.objects || def.ground.map(() => ''), true);
+            while (this.objectNames.length < this.height) this.objectNames.push(new Array(this.width).fill(null));
+        }
     }
 
     inBounds(x, y) {
@@ -30,11 +72,9 @@ export class GameMap {
     tileName(layer, x, y) {
         const o = this.overrides.get(x + ',' + y);
         if (o && layer in o) return o[layer];
-        const row = (layer === 'ground' ? this.ground : this.objects)[y];
-        if (!row) return null;
-        const ch = row[x];
-        if (!ch || ch === ' ' || (layer === 'objects' && ch === '.')) return null;
-        return this.legend[ch] || null;
+        const grid = layer === 'ground' ? this.groundNames : this.objectNames;
+        const row = grid[y];
+        return row ? row[x] || null : null;
     }
 
     /** 動態改變圖塊 (例如打開暗格、換掉物件)；name 為 null 代表移除 */

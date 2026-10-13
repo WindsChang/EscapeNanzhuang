@@ -3,6 +3,7 @@ import { Actor } from './actor.js';
 import { findPath } from './pathfind.js';
 import { ghostSprites } from './ghostface.js';
 import { TILE, DIRS } from './util.js';
+import { drawTile } from './sprites.js';
 
 const CHASE_SPEED = 3.3; // 格/秒 (主角約 4.6)
 const SEE_DISTANCE = 5; // 躲藏者現身時，老鬼在這個距離內會立刻發現
@@ -57,6 +58,7 @@ export class Ghost {
         this.active = false;
         this.pending = null;
         this.searchTarget = null;
+        this.prop = null;
     }
 
     /** 主角穿過出入口時：老鬼在延遲後從目的地的指定格出現 */
@@ -196,6 +198,11 @@ export class Ghost {
         ctx.save();
         ctx.globalAlpha = this.appear;
         ctx.drawImage(spr, Math.round(this.body.px - camX + TILE / 2 - 16), Math.round(this.body.py - camY + TILE - 40 + bob));
+        // 隨身道具 (例如醫院裡推著的點滴架)，畫在老鬼面向的另一側
+        if (this.prop) {
+            const side = this.body.dir === 'left' ? -14 : 14;
+            drawTile(ctx, this.prop, this.body.px - camX + side, this.body.py - camY + bob * 0.5);
+        }
         ctx.restore();
     }
 }

@@ -303,6 +303,9 @@ const SYNTH_SE = {
     success(a, t, vol) {
         [523, 659, 784, 1047].forEach((f, i) => tone(a, { type: 'square', f0: f, t0: t + i * 0.09, dur: 0.14, vol: 0.12 * vol }));
     },
+    water(a, t, vol) {
+        noise(a, { t0: t, dur: 2.2, vol: 0.16 * vol, freq: 3200, f1: 2200, q: 0.6 });
+    },
     pop(a, t, vol) {
         tone(a, { type: 'sine', f0: 300, f1: 900, t0: t, dur: 0.12, vol: 0.3 * vol });
     },

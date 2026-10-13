@@ -18,7 +18,7 @@ export class Actor {
         this.stepParity = 0;
         this.hidden = false;
         this.look = look;
-        this.sheet = look ? charSheet(id, look) : null;
+        this.sheet = look ? charSheet(id + (look.bigHead ? ':big' : ''), look) : null;
         this.onStep = null; // (actor) => void，每走完一格呼叫
     }
 

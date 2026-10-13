@@ -15,6 +15,7 @@ import { drawTile } from './sprites.js';
 import { ghostSprites } from './ghostface.js';
 import { charSheet, drawChar16 } from './sprites.js';
 import * as Save from './save.js';
+import * as overlays from './overlays.js';
 import { CHARACTERS, PLAYER_ID } from '../content/characters.js';
 import { itemDef } from '../content/items.js';
 import { CHAPTERS, mapDef } from '../content/chapters/index.js';
@@ -53,6 +54,7 @@ export class Game {
         this.invincible = false;
         this.showCoords = false;
 
+        this.faintRestart = null; // 章節指定的固定重來點：async (g, cause) => void
         this.chase = null; // { reason }
         this.timer = null; // 限時：{ left, total, onTimeout }
         this.slowZone = false;
@@ -104,7 +106,7 @@ export class Game {
      * 開始新遊戲或跳到某章節。
      * reset：先清空道具與旗標；preset：套用該章節預設的前置狀態 (除錯跳關用)。
      */
-    async startChapter(id, { reset = false, preset = false } = {}) {
+    async startChapter(id, { reset = false, preset = false, skipIntro = false } = {}) {
         const ch = CHAPTERS[id];
         if (!ch) throw new Error('unknown chapter ' + id);
         if (reset) this.state.reset();
@@ -117,6 +119,7 @@ export class Game {
         this.mode = 'play';
         this.endChase('abort');
         this.cancelTimer();
+        this.faintRestart = null;
         this.fainting = false;
         this.dialog.close();
         audio.stopBGM(0.4);
@@ -124,7 +127,7 @@ export class Game {
             await this.stubChapter(ch);
             return;
         }
-        await ch.start(this);
+        await ch.start(this, { skipIntro });
     }
 
     async stubChapter(ch) {
@@ -140,8 +143,7 @@ export class Game {
         this.map = new GameMap(def);
         this.entities = (def.entities || []).map((e, i) => ({ w: 1, h: 1, ...e, _i: i, fired: false }));
         this.hide.reset();
-        const look = CHARACTERS[PLAYER_ID].look;
-        this.player = new Actor({ id: PLAYER_ID, x, y, dir, look });
+        this.player = new Actor({ id: PLAYER_ID, x, y, dir, look: this.playerLook() });
         this.player.onStep = (a) => this.onPlayerStep(a);
         this.npcs.clear();
         for (const e of this.entities) {
@@ -153,6 +155,20 @@ export class Game {
         }
         this.updateCamera(true);
         if (def.bgm && audio.currentBGM !== def.bgm && !this.chase) audio.playBGM(def.bgm);
+    }
+
+    /** 主角目前的外觀 (被蜂叮後臉腫成大頭，狀態存在旗標裡，讀檔也會還原) */
+    playerLook() {
+        const look = CHARACTERS[PLAYER_ID].look;
+        return this.state.flag('bighead') ? { ...look, bigHead: true } : look;
+    }
+
+    setBigHead(on) {
+        this.state.flag('bighead', !!on);
+        if (this.player) {
+            this.player.look = this.playerLook();
+            this.player.sheet = charSheet(PLAYER_ID + (on ? ':big' : ''), this.player.look);
+        }
     }
 
     entityActive(e) {
@@ -257,6 +273,8 @@ export class Game {
         if (!e) return;
         if (e.kind === 'npc' && e.actor) e.actor.dir = facingTo(e.x, e.y, p.x, p.y);
         if (e.kind === 'hide') {
+            // 沒有追逐時，躲藏點只是普通的物件：顯示 idle 劇情 (沒有 idle 就直接可以躲)
+            if (!this.chase && e.idle) { this.runScript(() => e.idle(this, e)); return; }
             const r = this.hide.tryEnter(e);
             if (!r.ok && r.msg) this.floatText(r.msg);
             return;
@@ -361,13 +379,57 @@ export class Game {
     cancelTimer() { this.timer = null; }
 
     // ------------------------------------------------------------------
+    // 場景小工具 (標題卡、蛋糕、照片、片尾)
+    // ------------------------------------------------------------------
+
+    card(text, sub = '', opts) { return overlays.card(this.ui, text, sub, opts); }
+    cake() { return overlays.cake(this.ui); }
+    photos() { return overlays.photos(this.ui); }
+    credits() { return overlays.credits(this.ui); }
+
+    /** 章節接續時，上一段結尾是黑畫面：載入新地圖後淡入 */
+    async fadeInIfDark(sec = 0.6) {
+        if (this.fadeAlpha > 0.01) await this.fade(false, sec);
+    }
+
+    /** 老鬼慢慢變透明消失 */
+    async fadeOutGhost(sec = 1.5) {
+        const gh = this.ghost;
+        if (!gh.active) return;
+        const n = Math.round(sec * 20);
+        for (let i = 1; i <= n; i++) { gh.appear = 1 - i / n; await this.wait(0.05); }
+        gh.despawn();
+    }
+
+    /** 立刻擺出一隻不會動的老鬼 (劇情演出用)：不開始追逐 */
+    showGhost(x, y, stage) {
+        const gh = this.ghost;
+        gh.spawn(x, y, { stage, grace: 9999 });
+        gh.appear = 1;
+        return gh;
+    }
+
+    /** 讓 NPC 轉向 */
+    face(id, dir) {
+        const a = this.npc(id);
+        if (a) a.dir = dir;
+    }
+
+    /** 把 NPC 瞬間移到某格 */
+    placeNpc(id, x, y, dir) {
+        const a = this.npc(id);
+        if (a) a.teleport(x, y, dir);
+    }
+
+    // ------------------------------------------------------------------
     // 追逐、嚇暈
     // ------------------------------------------------------------------
 
     /** 讓老鬼在指定格出現並開始追逐 */
-    startChase(x, y, { stage = 1, speedMul = 1, bgm = 'chase', grace } = {}) {
+    startChase(x, y, { stage = 1, speedMul = 1, bgm = 'chase', grace, prop = null } = {}) {
         this.chase = { prevBgm: this.map.def.bgm, bgm };
         this.ghost.spawn(x, y, { stage, speedMul, grace });
+        this.ghost.prop = prop;
         audio.playSE('ghost');
         audio.playBGM(bgm, { fade: 0.3 });
     }
@@ -414,6 +476,15 @@ export class Game {
         this.scriptDepth++;
         try {
             await this.narrate(cause === 'ghost' ? '嚇暈了……（累計 ' + m.faints + ' 次）' : '腫到暈倒了……（累計 ' + m.faints + ' 次）');
+            // 章節指定了固定的重來點 (例如 Day 2 限時下山一律從山頂重新開始)
+            if (this.faintRestart) {
+                const restart = this.faintRestart;
+                this.fainting = false;
+                this.scriptDepth--;
+                await restart(this, cause);
+                await this.fade(false, 0.5);
+                return;
+            }
             const manual = Save.latestManual();
             const auto = Save.readSlot(Save.AUTO);
             const options = [];
@@ -466,6 +537,7 @@ export class Game {
     loadSnapshot(data) {
         this.endChase('abort');
         this.cancelTimer();
+        this.faintRestart = null;
         this.dialog.close();
         this.state.load(data);
         this.mode = 'play';
@@ -731,8 +803,7 @@ export class Game {
                 ctx.save();
                 ctx.translate(sx, sy);
                 ctx.rotate(Math.PI / 2);
-                const sheet = charSheet(p.id, p.look);
-                drawChar16(ctx, sheet, 'down', 0, -8, -8);
+                drawChar16(ctx, p.sheet, 'down', 0, -8, -8);
                 ctx.restore();
                 ctx.font = '12px sans-serif';
                 ctx.textAlign = 'center';

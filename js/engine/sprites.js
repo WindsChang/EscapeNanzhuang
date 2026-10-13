@@ -202,8 +202,117 @@ const bees = (g) => {
     R(g, '#f2c93a', 4, 11, 4, 3); R(g, '#2a2a2a', 5, 11, 1, 3);
 };
 
+// ----- 章節新增的物件 -----
+const bathtub = (g) => {
+    R(g, '#cfd9dd', 0, 3, T, 12); R(g, '#f4f4f8', 1, 4, 14, 10); R(g, '#7ab8e8', 2, 6, 12, 7); R(g, '#a8d4f4', 3, 7, 4, 2);
+    R(g, '#9aa8b0', 13, 1, 2, 3);
+};
+const sinkT = (g) => {
+    R(g, '#cfd9dd', 2, 6, 12, 6); R(g, '#f4f4f8', 3, 7, 10, 4); R(g, '#9aa8b0', 7, 3, 2, 4); R(g, '#7ab8e8', 6, 8, 4, 2);
+    R(g, '#8fcdf2', 3, 0, 10, 3); R(g, '#c8ecff', 4, 1, 3, 1); // 鏡子
+};
+const toilet = (g) => {
+    R(g, '#e8eef0', 4, 1, 8, 5); R(g, '#f4f4f8', 3, 6, 10, 7); R(g, '#cfd9dd', 4, 12, 8, 2); R(g, '#9aa8b0', 6, 3, 4, 1);
+};
+const rack = (g) => {
+    R(g, '#6a4226', 1, 1, 14, 14); R(g, '#8a5a30', 2, 2, 12, 12);
+    R(g, '#f4e0c8', 3, 3, 4, 4); R(g, '#e88aa8', 8, 3, 4, 4); R(g, '#a8d8c8', 3, 8, 4, 4); R(g, '#f2d25a', 8, 8, 4, 4);
+};
+const elevator = (g) => {
+    R(g, '#8a949a', 1, 0, 14, 16); R(g, '#b8c2c8', 2, 1, 6, 14); R(g, '#b8c2c8', 8, 1, 6, 14); R(g, '#6a747a', 7, 1, 2, 14);
+    R(g, '#c04a4a', 4, 3, 8, 4); R(g, '#fff', 5, 4, 6, 2); // 故障中
+};
+const drip = (g) => {
+    R(g, '#8a949a', 7, 2, 2, 13); R(g, '#8a949a', 4, 14, 8, 1); R(g, '#8a949a', 4, 1, 8, 1);
+    R(g, '#d8f0ff', 4, 2, 3, 6); R(g, '#7ab8e8', 5, 4, 1, 3); R(g, '#e8d8d8', 9, 2, 3, 5);
+};
+const shelfGoods = (g) => {
+    R(g, '#5a6a7a', 0, 0, T, T); R(g, '#8a9aaa', 1, 1, 14, 14); R(g, '#5a6a7a', 1, 7, 14, 1);
+    for (let i = 0; i < 4; i++) { R(g, ['#e85a5a', '#f2d25a', '#5ab0e8', '#5ae88a'][i], 2 + i * 3, 3, 2, 4); R(g, ['#f2a25a', '#c85ae8', '#e8e85a', '#5ac8e8'][i], 2 + i * 3, 10, 2, 4); }
+};
+const oden = (g) => {
+    R(g, '#9a9a9a', 0, 5, T, 11); R(g, '#d8d8d8', 1, 6, 14, 8); R(g, '#e8c46a', 2, 4, 12, 4); R(g, '#c8a43a', 3, 8, 3, 3); R(g, '#f4f4f4', 7, 8, 3, 3); R(g, '#c85a3a', 11, 8, 3, 3);
+};
+const freezer = (g) => {
+    R(g, '#5a8ab0', 0, 2, T, 14); R(g, '#a8d4f0', 1, 4, 14, 11); R(g, '#e8f4ff', 3, 6, 4, 3); R(g, '#e8f4ff', 9, 10, 4, 3);
+};
+const glassDoor = (g) => {
+    R(g, '#4a5a6a', 0, 0, T, T); R(g, '#a8d4f0', 1, 1, 6, 14); R(g, '#a8d4f0', 9, 1, 6, 14); R(g, '#e8f4ff', 2, 2, 2, 8); R(g, '#e8f4ff', 10, 2, 2, 8);
+};
+const bedHome = (g) => {
+    R(g, '#6a4226', 0, 1, T, 15); R(g, '#e8d8f4', 1, 3, 14, 12); R(g, '#f4eefc', 2, 4, 5, 4); R(g, '#f4eefc', 9, 4, 5, 4); R(g, '#8a6ad9', 1, 9, 14, 6);
+};
+const figCase = (g) => {
+    R(g, '#5a3a20', 0, 0, T, T); R(g, '#a8d4f0', 1, 1, 14, 14); R(g, '#e8f4ff', 2, 2, 3, 5);
+    R(g, '#5a3a20', 1, 7, 14, 1);
+    R(g, '#e8c46a', 3, 3, 2, 4); R(g, '#d85a5a', 7, 4, 3, 3); R(g, '#5ab0e8', 11, 3, 2, 4);
+    R(g, '#5ae88a', 3, 10, 3, 4); R(g, '#c85ae8', 8, 10, 3, 4); R(g, '#f2a25a', 12, 11, 2, 3);
+};
+const figSlot = (g) => {
+    R(g, '#5a3a20', 0, 0, T, T); R(g, '#a8d4f0', 1, 1, 14, 14); R(g, '#5a3a20', 1, 12, 14, 2);
+    R(g, '#c0e0f4', 4, 3, 8, 9); // 空位 (可以站進去假裝公仔)
+};
+const stove = (g) => {
+    R(g, '#5a5a62', 0, 3, T, 13); R(g, '#8a8a92', 1, 4, 14, 11); R(g, '#2a2a30', 3, 5, 4, 4); R(g, '#2a2a30', 9, 5, 4, 4); R(g, '#c04a4a', 5, 11, 2, 2);
+};
+const bookshelf = (g) => {
+    R(g, '#5a3a20', 0, 0, T, T); R(g, '#7a5028', 1, 1, 14, 14);
+    for (let r = 0; r < 3; r++) for (let i = 0; i < 6; i++) R(g, ['#c04a4a', '#4a7ac0', '#4ac07a', '#c0a04a', '#8a4ac0', '#c04a8a'][(i + r) % 6], 2 + i * 2, 2 + r * 4, 2, 3);
+};
+const cake = (g) => {
+    R(g, '#f4e0c8', 2, 8, 12, 6); R(g, '#e88aa8', 2, 8, 12, 2); R(g, '#fff', 3, 6, 10, 3);
+    for (const x of [4, 7, 10]) { R(g, '#f2d25a', x, 2, 1, 4); R(g, '#ff9a3a', x, 1, 1, 1); }
+    R(g, '#c04a4a', 5, 11, 2, 2); R(g, '#4a7ac0', 9, 11, 2, 2);
+};
+const rug = (g) => {
+    R(g, '#c09a6a', 0, 0, T, T); R(g, '#a07a4a', 0, 0, T, 1); R(g, '#a07a4a', 0, 15, T, 1); R(g, '#d8b88a', 3, 3, 10, 10); R(g, '#b8885a', 5, 5, 6, 6);
+};
+const summit = (g) => {
+    R(g, '#8a8a92', 3, 7, 10, 8); R(g, '#a8a8b0', 4, 6, 8, 3); R(g, '#e8e85a', 7, 3, 2, 4); R(g, '#2a2a30', 7, 9, 2, 2);
+};
+const luggage = (g) => {
+    R(g, '#2a4a8a', 2, 4, 12, 11); R(g, '#4a6aaa', 3, 5, 10, 9); R(g, '#1a2a5a', 6, 2, 4, 3); R(g, '#c8c8c8', 4, 14, 2, 2); R(g, '#c8c8c8', 10, 14, 2, 2);
+};
+const vanL = (g) => {
+    R(g, '#e8e8f0', 0, 3, T, 11); R(g, '#c8c8d8', 0, 3, T, 2); R(g, '#8fcdf2', 4, 5, 6, 4); R(g, '#2a2a30', 2, 13, 5, 3); R(g, '#8a8a92', 3, 14, 3, 2);
+};
+const vanR = (g) => {
+    R(g, '#e8e8f0', 0, 3, 14, 11); R(g, '#c8c8d8', 0, 3, 14, 2); R(g, '#8fcdf2', 2, 5, 8, 4); R(g, '#2a2a30', 8, 13, 5, 3); R(g, '#8a8a92', 9, 14, 3, 2);
+    R(g, '#f2d25a', 13, 9, 2, 2);
+};
+const sleeper = (g) => {
+    kenney('tiny-town', 1, 1)(g);
+    R(g, '#6b4a2a', 0, 3, T, 3); R(g, '#6b4a2a', 0, 10, T, 3);
+};
+
+const GROUND_NAMES = new Set(['grass', 'dirt', 'wood', 'tatami', 'tile', 'carpet', 'hosp', 'concrete', 'rails', 'slope', 'water',
+    'wall', 'wallface', 'wallhosp', 'window', 'door', 'stairsup', 'stairsdown', 'glassdoor', 'rug', 'sleeper']);
+
 export const TILE_DEFS = {
     // 地面
+    glassdoor: { draw: glassDoor },
+    rug: { draw: rug },
+    sleeper: { draw: sleeper },
+    // 章節物件
+    bathtub: { draw: bathtub, solid: true },
+    sink: { draw: sinkT, solid: true },
+    toilet: { draw: toilet, solid: true },
+    rack: { draw: rack, solid: true },
+    elevator: { draw: elevator, solid: true },
+    drip: { draw: drip },
+    shelfgoods: { draw: shelfGoods, solid: true },
+    oden: { draw: oden, solid: true },
+    freezer: { draw: freezer, solid: true },
+    bedhome: { draw: bedHome, solid: true },
+    figcase: { draw: figCase, solid: true },
+    figslot: { draw: figSlot, solid: true },
+    stove: { draw: stove, solid: true },
+    bookshelf: { draw: bookshelf, solid: true },
+    cake: { draw: cake },
+    summit: { draw: summit, solid: true },
+    luggage: { draw: luggage, solid: true },
+    vanl: { draw: vanL, solid: true },
+    vanr: { draw: vanR, solid: true },
     grass: { draw: kenney('tiny-town', 0, 0) },
     dirt: { draw: kenney('tiny-town', 1, 1) },
     wood: { draw: floorWood },
@@ -290,6 +399,11 @@ export function isSolidTile(name) {
     return !!(TILE_DEFS[name] && TILE_DEFS[name].solid);
 }
 
+/** 地面型圖塊 (不是疊在地板上的物件) */
+export function isGroundTile(name) {
+    return GROUND_NAMES.has(name);
+}
+
 // ---------------------------------------------------------------------
 // 角色走路圖：每個角色 4 方向 x 3 格 (站立 / 左腳 / 右腳)，每格 16x16
 // ---------------------------------------------------------------------
@@ -322,30 +436,36 @@ function drawChar(g, ox, oy, look, dir, frame) {
     // 手
     R(g, skin, x - 1, y + 8 + bob + (frame === 1 ? 1 : 0), 1, 3);
     R(g, skin, x + 8, y + 8 + bob + (frame === 2 ? 1 : 0), 1, 3);
-    // 頭
-    R(g, skin, x, y + 1 + bob, 8, 7);
+    // 頭 (大頭狀態：被蜂叮、臉腫起來，頭變大)
+    const big = !!look.bigHead;
+    const hx = big ? x - 2 : x; // 頭的左緣
+    const hw = big ? 12 : 8; // 頭寬
+    const hy = big ? y - 2 + bob : y + bob; // 頭的上緣 (頭髮頂端)
+    R(g, skin, hx, hy + 1, hw, big ? 11 : 7);
     // 頭髮與臉
     const hair = look.hair;
     if (dir === 'up') {
-        R(g, hair, x - 1, y + bob, 10, 8);
-        if (look.hairStyle === 'long') R(g, hair, x - 1, y + 3 + bob, 10, 7);
+        R(g, hair, hx - 1, hy, hw + 2, big ? 11 : 8);
+        if (look.hairStyle === 'long') R(g, hair, hx - 1, hy + 3, hw + 2, 7);
     } else {
-        R(g, hair, x - 1, y + bob, 10, 3);
-        R(g, hair, x - 1, y + bob, 1, 5); R(g, hair, x + 8, y + bob, 1, 5);
-        if (look.hairStyle === 'long') { R(g, hair, x - 1, y + 3 + bob, 2, 6); R(g, hair, x + 7, y + 3 + bob, 2, 6); }
-        if (look.hairStyle === 'bun') R(g, hair, x + 2, y - 2 + bob, 4, 3);
-        if (look.pigtails) { R(g, hair, x - 2, y + 3 + bob, 2, 4); R(g, hair, x + 8, y + 3 + bob, 2, 4); }
+        R(g, hair, hx - 1, hy, hw + 2, 3);
+        R(g, hair, hx - 1, hy, 1, 5); R(g, hair, hx + hw, hy, 1, 5);
+        if (look.hairStyle === 'long') { R(g, hair, hx - 1, hy + 3, 2, 6); R(g, hair, hx + hw - 1, hy + 3, 2, 6); }
+        if (look.hairStyle === 'bun') R(g, hair, hx + 2, hy - 2, 4, 3);
+        if (look.pigtails) { R(g, hair, hx - 2, hy + 3, 2, 4); R(g, hair, hx + hw, hy + 3, 2, 4); }
     }
-    // 眼睛
+    // 眼睛 (大頭時眼睛位置往下，並加上紅腫的臉頰)
+    const ey = hy + (big ? 7 : 5);
+    if (big && dir !== 'up') { R(g, '#e8786a', hx + 1, ey + 2, 3, 2); R(g, '#e8786a', hx + hw - 4, ey + 2, 3, 2); }
     if (dir === 'down') {
-        R(g, '#222', x + 1, y + 5 + bob, 2, 2); R(g, '#222', x + 5, y + 5 + bob, 2, 2);
-        if (look.glasses) { R(g, '#222', x, y + 4 + bob, 4, 1); R(g, '#222', x + 4, y + 4 + bob, 4, 1); }
+        R(g, '#222', hx + (big ? 2 : 1), ey, 2, 2); R(g, '#222', hx + hw - (big ? 4 : 3), ey, 2, 2);
+        if (look.glasses) { R(g, '#222', hx, ey - 1, hw / 2, 1); R(g, '#222', hx + hw / 2, ey - 1, hw / 2, 1); }
     } else if (dir === 'left') {
-        R(g, '#222', x + 1, y + 5 + bob, 2, 2);
-        if (look.glasses) R(g, '#222', x, y + 4 + bob, 4, 1);
+        R(g, '#222', hx + 1, ey, 2, 2);
+        if (look.glasses) R(g, '#222', hx, ey - 1, hw / 2, 1);
     } else if (dir === 'right') {
-        R(g, '#222', x + 5, y + 5 + bob, 2, 2);
-        if (look.glasses) R(g, '#222', x + 4, y + 4 + bob, 4, 1);
+        R(g, '#222', hx + hw - 3, ey, 2, 2);
+        if (look.glasses) R(g, '#222', hx + hw / 2, ey - 1, hw / 2, 1);
     }
 }
 

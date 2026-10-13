@@ -6,7 +6,7 @@ import { audio } from './engine/audio.js';
 import { settings } from './engine/save.js';
 import { Game } from './engine/game.js';
 import { Title } from './engine/title.js';
-import { NEW_GAME_CHAPTER } from './content/chapters/index.js';
+import { NEW_GAME_CHAPTER, CHAPTERS } from './content/chapters/index.js';
 import { h } from './engine/util.js';
 
 const canvas = document.getElementById('screen');
@@ -61,6 +61,12 @@ async function boot() {
             title.hide();
             audio.stopBGM(0.4);
             game.loadSnapshot(data);
+        },
+        // 通關後可以從標題重看結局 (慶生、照片、片尾)
+        onEnding: async () => {
+            title.hide();
+            audio.stopBGM(0.4);
+            await CHAPTERS.day3.replay(game);
         },
     });
     game.onTitle = () => title.show({ skipTap: true });

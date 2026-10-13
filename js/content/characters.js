@@ -13,7 +13,13 @@ const LOOKS = {
     pb: { skin: '#f2c9a0', hair: '#2a2a2a', hairStyle: 'long', shirt: '#c94a4a', pants: '#2a3a5a', glasses: true },
 };
 
+// 劇情中的其他角色 (不在 8 位同行者之內，名稱與外觀固定)
+const EXTRA = {
+    elder: { name: '怪阿伯', look: { skin: '#e0b890', hair: '#cfcfcf', hairStyle: 'short', shirt: '#7aa0c8', pants: '#8a8a9a' } },
+};
+
 export const CHARACTERS = {};
+for (const [id, def] of Object.entries(EXTRA)) CHARACTERS[id] = { id, name: def.name, portrait: null, look: def.look };
 for (const [id, look] of Object.entries(LOOKS)) {
     const cfg = userConfig.characters[id] || {};
     CHARACTERS[id] = {
