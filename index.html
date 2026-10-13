@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="format-detection" content="telephone=no">
+<title>逃出南庄</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+    <div id="stage">
+        <canvas id="screen" width="320" height="240"></canvas>
+        <div id="ui"></div>
+    </div>
+    <div id="touch" hidden>
+        <div id="dpad">
+            <button class="dp up" data-key="up" aria-label="上">▲</button>
+            <button class="dp left" data-key="left" aria-label="左">◀</button>
+            <button class="dp right" data-key="right" aria-label="右">▶</button>
+            <button class="dp down" data-key="down" aria-label="下">▼</button>
+        </div>
+        <div id="actions">
+            <button class="act" data-act="cancel" aria-label="選單">選單</button>
+            <button class="act" data-act="blink" aria-label="眨眼" hidden>眨眼</button>
+            <button class="act big" data-act="ok" aria-label="確認">確認</button>
+        </div>
+    </div>
+</div>
+<noscript><p style="color:#fff;padding:1em">請啟用 JavaScript 才能遊玩。</p></noscript>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

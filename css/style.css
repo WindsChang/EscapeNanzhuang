@@ -1,0 +1,264 @@
+:root {
+    --u: 2px; /* 每個遊戲像素對應的螢幕像素，由 main.js 依視窗大小設定 */
+    --bg: #000;
+    --panel: rgba(20, 16, 36, 0.94);
+    --panel-border: #f4e9c8;
+    --text: #fff8e8;
+    --accent: #ffd35a;
+    --danger: #ff6a6a;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    overscroll-behavior: none;
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
+#app {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100dvh;
+}
+
+#stage {
+    position: relative;
+    width: calc(320 * var(--u));
+    height: calc(240 * var(--u));
+    background: #000;
+    overflow: hidden;
+    touch-action: none;
+}
+
+#screen {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+#ui {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    font-size: max(15px, calc(var(--u) * 7.5));
+    line-height: 1.45;
+}
+
+#ui > * { pointer-events: auto; }
+
+/* ---------- 對話框 ---------- */
+.dialog {
+    position: absolute;
+    left: 1.5%;
+    right: 1.5%;
+    bottom: 2%;
+    min-height: 26%;
+    padding: 0.5em 0.7em;
+    display: flex;
+    gap: 0.7em;
+    background: var(--panel);
+    border: 2px solid var(--panel-border);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.dialog .portrait {
+    flex: 0 0 auto;
+    width: calc(var(--u) * 34);
+    height: calc(var(--u) * 34);
+    min-width: 56px;
+    min-height: 56px;
+    max-width: 96px;
+    max-height: 96px;
+    border: 2px solid var(--panel-border);
+    border-radius: 6px;
+    background: #2b2447;
+    image-rendering: pixelated;
+    align-self: center;
+}
+
+.dialog .body { flex: 1 1 auto; min-width: 0; }
+.dialog .name { color: var(--accent); font-weight: 700; margin-bottom: 0.1em; }
+.dialog .text { white-space: pre-wrap; word-break: break-word; }
+.dialog .more {
+    position: absolute;
+    right: 0.7em;
+    bottom: 0.3em;
+    color: var(--accent);
+    animation: blink 0.9s steps(2) infinite;
+}
+
+.dialog.narration { text-align: center; justify-content: center; }
+.dialog.narration .name { display: none; }
+
+.choices {
+    margin-top: 0.4em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+}
+
+.choice, .menu-item, .slot, .btn {
+    padding: 0.3em 0.8em;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.choice.focus, .menu-item.focus, .slot.focus, .btn.focus, .choice:hover, .menu-item:hover, .slot:hover {
+    border-color: var(--accent);
+    background: rgba(255, 211, 90, 0.18);
+}
+
+.menu-item:disabled, .slot:disabled, .menu-item.disabled { opacity: 0.45; cursor: default; }
+
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ---------- 選單與彈出面板 ---------- */
+.overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.panel {
+    width: min(92%, 36em);
+    max-height: 92%;
+    overflow: auto;
+    padding: 0.7em 0.9em;
+    background: var(--panel);
+    border: 2px solid var(--panel-border);
+    border-radius: 10px;
+}
+
+.panel h2 { margin: 0 0 0.4em; font-size: 1.1em; color: var(--accent); }
+.panel .status { margin-top: 0.6em; padding-top: 0.5em; border-top: 1px solid rgba(255, 248, 232, 0.3); font-size: 0.9em; opacity: 0.9; }
+.panel .list { display: flex; flex-direction: column; gap: 0.25em; }
+.panel .hint { font-size: 0.85em; opacity: 0.75; margin-top: 0.4em; }
+.panel .notice { color: var(--danger); margin-top: 0.4em; }
+.slot { display: flex; justify-content: space-between; gap: 1em; }
+.slot small { opacity: 0.75; }
+.item-row { display: flex; gap: 0.6em; align-items: center; }
+.item-row canvas { width: 32px; height: 32px; image-rendering: pixelated; flex: 0 0 auto; }
+.item-row .desc { font-size: 0.85em; opacity: 0.8; }
+
+.setting { display: flex; align-items: center; gap: 0.6em; padding: 0.25em 0.3em; border: 2px solid transparent; border-radius: 6px; }
+.setting.focus { border-color: var(--accent); background: rgba(255, 211, 90, 0.12); }
+.setting label { flex: 0 0 7em; }
+.setting input[type=range] { flex: 1 1 auto; min-width: 0; }
+.setting .val { flex: 0 0 2.5em; text-align: right; }
+
+/* ---------- 密碼鎖與排列謎題 ---------- */
+.code-display { display: flex; gap: 0.4em; justify-content: center; margin: 0.4em 0; }
+.code-display span {
+    width: 2em; height: 2.4em; display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--panel-border); border-radius: 6px; background: #120e22; font-size: 1.3em; font-weight: 700;
+}
+.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.35em; max-width: 14em; margin: 0 auto; }
+.keypad button { padding: 0.4em 0; font: inherit; font-size: 1.1em; border: 2px solid var(--panel-border); border-radius: 8px; background: #2b2447; color: var(--text); }
+.keypad button:active { background: #4a3f7a; }
+.puzzle-msg { text-align: center; min-height: 1.5em; margin-top: 0.4em; }
+.puzzle-msg.bad { color: var(--danger); }
+.slots { display: flex; gap: 0.5em; justify-content: center; flex-wrap: wrap; margin: 0.6em 0; }
+.slots button {
+    width: 3.2em; height: 3.2em; font-size: 1.4em; border: 2px solid var(--panel-border); border-radius: 8px;
+    background: #2b2447; color: var(--text);
+}
+.slots button.focus { border-color: var(--accent); background: rgba(255, 211, 90, 0.22); }
+.row-btns { display: flex; gap: 0.5em; justify-content: center; margin-top: 0.5em; }
+.btn { text-align: center; border-color: var(--panel-border); }
+
+/* ---------- 標題畫面 ---------- */
+.title {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6em;
+    background: radial-gradient(ellipse at 50% 35%, #34508a 0%, #14102a 70%);
+    text-align: center;
+}
+.title h1 { margin: 0; font-size: 2.4em; letter-spacing: 0.15em; text-shadow: 3px 3px 0 #7a2a6a, 0 0 18px #6aa0ff; }
+.title .sub { opacity: 0.85; margin-bottom: 0.8em; }
+.title .list { min-width: 12em; }
+.title .tap { color: var(--accent); animation: blink 1.1s steps(2) infinite; }
+.title .note { font-size: 0.75em; opacity: 0.7; max-width: 90%; }
+
+/* ---------- 載入畫面 ---------- */
+.loading { position: absolute; inset: 0; background: #0b0816; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6em; }
+.loading .bar { width: 60%; height: 0.8em; border: 2px solid var(--panel-border); border-radius: 6px; overflow: hidden; }
+.loading .bar > i { display: block; height: 100%; width: 0; background: var(--accent); }
+
+/* ---------- 除錯面板 (僅 ?debug=1 時建立) ---------- */
+.debug-toggle { position: absolute; left: 4px; top: 4px; width: 2em; height: 2em; border-radius: 50%; border: 1px solid #fff; background: rgba(0, 0, 0, 0.5); color: #fff; font-size: 0.9em; opacity: 0.6; }
+.debug-panel { position: absolute; left: 4px; top: 2.8em; right: 4px; max-height: 80%; overflow: auto; padding: 0.5em; background: rgba(0, 0, 0, 0.85); border: 1px solid #6f6; border-radius: 6px; font-size: 0.8em; }
+.debug-panel h3 { margin: 0.4em 0 0.2em; color: #6f6; font-size: 1em; }
+.debug-panel .row { display: flex; flex-wrap: wrap; gap: 0.3em; align-items: center; }
+.debug-panel button, .debug-panel select, .debug-panel input { font: inherit; padding: 0.15em 0.5em; }
+
+/* ---------- 觸控控制 ---------- */
+#touch { display: none; touch-action: none; }
+body.is-touch #touch { display: flex; }
+#touch[hidden] { display: none !important; }
+
+#dpad {
+    position: relative;
+    width: 168px; height: 168px;
+    flex: 0 0 auto;
+}
+#dpad .dp {
+    position: absolute; width: 56px; height: 56px;
+    border: 2px solid rgba(255, 255, 255, 0.55); border-radius: 12px;
+    background: rgba(255, 255, 255, 0.16); color: #fff; font-size: 22px;
+    touch-action: none;
+}
+#dpad .dp.pressed, #actions .act.pressed { background: rgba(255, 211, 90, 0.5); }
+#dpad .up { left: 56px; top: 0; }
+#dpad .down { left: 56px; top: 112px; }
+#dpad .left { left: 0; top: 56px; }
+#dpad .right { left: 112px; top: 56px; }
+
+#actions { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 10px; flex: 0 0 auto; }
+#actions .act {
+    min-width: 72px; height: 48px; padding: 0 14px;
+    border: 2px solid rgba(255, 255, 255, 0.55); border-radius: 24px;
+    background: rgba(255, 255, 255, 0.16); color: #fff; font: inherit; font-size: 16px;
+    touch-action: none;
+}
+#actions .act.big { min-width: 96px; height: 96px; border-radius: 50%; font-size: 20px; }
+#actions .act[hidden] { display: none; }
+
+/* 直式：控制區在畫面下方 */
+body.is-touch.portrait #app { justify-content: flex-start; }
+body.is-touch.portrait #touch {
+    width: 100%; flex: 1 1 auto;
+    align-items: center; justify-content: space-between;
+    padding: 6px 18px calc(10px + env(safe-area-inset-bottom));
+}
+
+/* 橫式：控制區疊在畫面兩側 */
+body.is-touch.landscape #touch {
+    position: fixed; left: 0; right: 0; bottom: calc(6px + env(safe-area-inset-bottom));
+    padding: 0 calc(14px + env(safe-area-inset-left)) 0 calc(14px + env(safe-area-inset-right));
+    justify-content: space-between; align-items: flex-end;
+    pointer-events: none; opacity: 0.8;
+}
+body.is-touch.landscape #touch > * { pointer-events: auto; }
